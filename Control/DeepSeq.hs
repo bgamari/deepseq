@@ -96,6 +96,8 @@ import Numeric.Natural ( Natural )
 #if MIN_VERSION_base(4,9,0)
 import Data.List.NonEmpty ( NonEmpty (..) )
 import Data.Semigroup as Semi
+
+import GHC.TypeLits (TypeError, ErrorMessage(..))
 #endif
 
 #if __GLASGOW_HASKELL__ >= 702
