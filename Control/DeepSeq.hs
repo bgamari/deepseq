@@ -106,7 +106,11 @@ import Data.List.NonEmpty ( NonEmpty (..) )
 import Data.Semigroup as Semi
 #endif
 
-#if MIN_VERSION_base(4,9,0)
+
+#if MIN_VERSION_base(4,10,0)
+import Type.Reflection ( Module, rnfModule )
+import GHC.Stack.Types ( CallStack(..), SrcLoc(..) )
+#elif MIN_VERSION_base(4,9,0)
 import GHC.Stack.Types ( CallStack(..), SrcLoc(..) )
 #elif MIN_VERSION_base(4,8,1)
 import GHC.Stack ( CallStack(..) )
@@ -795,7 +799,22 @@ instance NFData1 Option where
 ----------------------------------------------------------------------------
 -- GHC.Stack
 
-#if MIN_VERSION_base(4,9,0)
+#if MIN_VERSION_base(4,10,0)
+-- |@since 1.4.2.0
+instance NFData SrcLoc where
+  rnf (SrcLoc a b c d e f) = rnf a `seq` rnf b `seq` rnf c `seq`
+                             rnf d `seq` rnf e `seq` rnf f
+
+instance NFData Module where
+  rnf = rnfModule
+
+-- |@since 1.4.2.0
+instance NFData CallStack where
+  rnf EmptyCallStack = ()
+  rnf (PushCallStack a b c) = rnf a `seq` rnf b `seq` rnf c
+  rnf (FreezeCallStack a)   = rnf a
+
+#elif MIN_VERSION_base(4,9,0)
 -- |@since 1.4.2.0
 instance NFData SrcLoc where
   rnf (SrcLoc a b c d e f g) = rnf a `seq` rnf b `seq` rnf c `seq`
